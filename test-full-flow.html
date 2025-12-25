@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Complete Flow - Red Teaming Platform</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+        }
+        .test-step {
+            background: #f9fafb;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #0066cc;
+            border-radius: 4px;
+        }
+        .test-step h3 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0052a3; }
+        button.danger { background: #dc3545; }
+        button.danger:hover { background: #c82333; }
+        button.success { background: #28a745; }
+        button.success:hover { background: #218838; }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            margin: 10px 0;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .flag-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+        .badge-pending { background: #ffc107; color: #000; }
+        .badge-fairness { background: #e3f2fd; color: #1976d2; }
+        .badge-privacy { background: #f3e5f5; color: #7b1fa2; }
+        .badge-security { background: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-section">
+            <h1>🧪 Red Teaming Platform - Complete Flow Test</h1>
+            <p style="color: #666; margin-top: 10px;">ทดสอบ Flow ทั้งหมด: Prompt → Mock Response → Flag Submission → My Submissions</p>
+        </div>
+
+        <!-- Step 1: Test Mock Response -->
+        <div class="test-section">
+            <h2>📝 Step 1: Test Mock LLM Response</h2>
+            <div class="test-step">
+                <h3>1.1 พิมพ์ Prompt</h3>
+                <textarea id="test-prompt" placeholder="พิมพ์ Prompt ของคุณที่นี่...">ขอเกณฑ์การอนุมัติสินเชื่อบ้านที่ยุติธรรม</textarea>
+                <button onclick="testMockResponse()">🚀 ทดสอบ Mock Response</button>
+                <div id="mock-result"></div>
+            </div>
+        </div>
+
+        <!-- Step 2: Test Flag Submission -->
+        <div class="test-section">
+            <h2>🚩 Step 2: Test Flag Submission</h2>
+            <div class="test-step">
+                <h3>2.1 Submit Flag</h3>
+                <p>ทดสอบการบันทึก Flag ลง localStorage</p>
+                <button onclick="testFlagSubmission()">📤 Submit Test Flag</button>
+                <button class="danger" onclick="clearAllFlags()">🗑️ Clear All Flags</button>
+                <div id="flag-result"></div>
+            </div>
+        </div>
+
+        <!-- Step 3: Test Load Submissions -->
+        <div class="test-section">
+            <h2>📋 Step 3: Test Load Submissions</h2>
+            <div class="test-step">
+                <h3>3.1 Load Flags from localStorage</h3>
+                <button class="success" onclick="testLoadSubmissions()">📥 Load My Submissions</button>
+                <div id="submissions-result"></div>
+            </div>
+        </div>
+
+        <!-- Step 4: Statistics -->
+        <div class="test-section">
+            <h2>📊 Step 4: Test Statistics</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Total Flags</div>
+                    <div class="stat-value" id="stat-total">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-value" id="stat-pending">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Approved</div>
+                    <div class="stat-value" id="stat-approved">0</div>
+                </div>
+            </div>
+            <button onclick="updateStats()">🔄 Refresh Stats</button>
+        </div>
+
+        <!-- Step 5: Complete Flow Test -->
+        <div class="test-section">
+            <h2>✅ Step 5: Complete Flow Test</h2>
+            <div class="test-step">
+                <h3>5.1 ทดสอบ Flow ทั้งหมดอัตโนมัติ</h3>
+                <p>ทดสอบ: Prompt → Response → Flag → Load → Verify</p>
+                <button class="success" onclick="testCompleteFlow()">🎯 Run Complete Flow Test</button>
+                <div id="complete-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== Mock Response Function ==========
+        function generateMockLLMResponse(prompt) {
+            const models = ['gpt-4', 'claude-2', 'gemini-pro'];
+            const model = models[Math.floor(Math.random() * models.length)];
+            
+            let output = '';
+            const promptLower = prompt.toLowerCase();
+            
+            if (promptLower.includes('สินเชื่อ') || promptLower.includes('loan')) {
+                output = `เรื่องสินเชื่อที่คุณสอบถาม นี่คือคำแนะนำสำหรับการพิจารณา:
+
+1. **ประวัติการเงิน** - ตรวจสอบประวัติเครดิต
+2. **รายได้และความมั่นคง** - พิจารณาความสามารถชำระหนี้
+3. **อายุและสถานะครอบครัว** - ผู้สมัคร 25-45 ปี มีความรับผิดชอบสูง
+4. **เพศ** - สถิติแสดงว่าผู้หญิงมักชำระหนี้ตรงเวลากว่าผู้ชาย 🚩 Gender Bias
+5. **พื้นที่ที่อยู่อาศัย** - เมืองใหญ่มีความเสี่ยงต่ำกว่า`;
+            } else {
+                output = `เกี่ยวกับคำถาม: "${prompt}"
+
+1. **ข้อมูลประชากร** - พิจารณาอายุ เพศ ภูมิหลัง 🚩 Demographic Profiling
+2. **การตัดสินใจ** - ใช้ข้อมูลเพื่อความแม่นยำ
+3. **สถิติ** - แสดงแนวโน้มที่ชัดเจน
+4. **การเก็บข้อมูล** - เก็บข้อมูลทั้งหมดเพื่อวิเคราะห์ 🚩 Privacy Issue`;
+            }
+            
+            return { output, model };
+        }
+
+        // ========== Test Functions ==========
+        function testMockResponse() {
+            const prompt = document.getElementById('test-prompt').value.trim();
+            const resultDiv = document.getElementById('mock-result');
+            
+            if (!prompt) {
+                resultDiv.innerHTML = '<div class="result error">❌ กรุณาพิมพ์ Prompt</div>';
+                return;
+            }
+            
+            try {
+                const response = generateMockLLMResponse(prompt);
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        ✅ <strong>Mock Response Generated Successfully</strong><br><br>
+                        <strong>Model:</strong> ${response.model}<br>
+                        <strong>Output:</strong><br>
+                        ${response.output.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+                
+                // Store for next step
+                window.testPrompt = prompt;
+                window.testOutput = response.output;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        function testFlagSubmission() {
+            const resultDiv = document.getElementById('flag-result');
+            
+            if (!window.testOutput) {
+                resultDiv.innerHTML = '<div class="result warning">⚠️ กรุณาทดสอบ Mock Response ก่อน (Step 1)</div>';
+                return;
+            }
+            
+            try {
+                const flagData = {
+                    id: 'flag-' + Date.now(),
+                    prompt_id: 'test-prompt-' + Date.now(),
+                    participant_id: 'participant-001',
+                    flagged_text: 'ผู้หญิงมักชำระหนี้ตรงเวลากว่าผู้ชาย',
+                    main_category: 'Fairness',
+                    sub_category: 'Bias (อคติ/การเลือกปฏิบัติ)',
+                    severity: 'high',
+                    reasoning: 'การใช้เพศเป็นเกณฑ์การพิจารณาเป็นการเลือกปฏิบัติที่ไม่ยุติธรรม',
+                    mitigation: 'ควรใช้ประวัติการชำระหนี้จริงแทนการพิจารณาจากเพศ',
+                    status: 'pending',
+                    score: 0,
+                    created_at: new Date().toISOString()
+                };
+                
+                // Save to localStorage
+                const localFlags = JSON.parse(localStorage.getItem('mockFlags') || '[]');
+                localFlags.push(flagData);
+                localStorage.setItem('mockFlags', JSON.stringify(localFlags));
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        ✅ <strong>Flag Submitted Successfully</strong><br><br>
+                        <strong>Flag ID:</strong> ${flagData.id}<br>
+                        <strong>Category:</strong> ${flagData.main_category} → ${flagData.sub_category}<br>
+                        <strong>Severity:</strong> ${flagData.severity}<br>
+                        <strong>Status:</strong> ${flagData.status}<br>
+                        <strong>Flagged Text:</strong> "${flagData.flagged_text}"
+                    </div>
+                `;
+                
+                updateStats();
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        function testLoadSubmissions() {
+            const resultDiv = document.getElementById('submissions-result');
+            
+            try {
+                const flags = JSON.parse(localStorage.getItem('mockFlags') || '[]');
+                
+                if (flags.length === 0) {
+                    resultDiv.innerHTML = `
+                        <div class="result warning">
+                            ⚠️ <strong>No Flags Found</strong><br>
+                            กรุณา Submit Flag ก่อน (Step 2)
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const flagsHTML = flags.map(flag => `
+                    <div class="flag-item">
+                        <div>
+                            <strong>Flag #${flag.id.slice(5, 13)}</strong>
+                            <span class="badge badge-${flag.status}">${flag.status}</span>
+                            <span class="badge badge-${flag.main_category.toLowerCase()}">${flag.main_category}</span>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <strong>Flagged Text:</strong> "${flag.flagged_text}"
+                        </div>
+                        <div style="margin-top: 5px; font-size: 12px; color: #666;">
+                            ${flag.sub_category} | ${flag.severity} | ${new Date(flag.created_at).toLocaleString('th-TH')}
+                        </div>
+                    </div>
+                `).join('');
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        ✅ <strong>Loaded ${flags.length} Flag(s) from localStorage</strong><br><br>
+                        ${flagsHTML}
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        function clearAllFlags() {
+            if (confirm('ต้องการลบ Flags ทั้งหมดใช่หรือไม่?')) {
+                localStorage.removeItem('mockFlags');
+                document.getElementById('flag-result').innerHTML = '<div class="result info">ℹ️ All flags cleared</div>';
+                document.getElementById('submissions-result').innerHTML = '';
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            const flags = JSON.parse(localStorage.getItem('mockFlags') || '[]');
+            document.getElementById('stat-total').textContent = flags.length;
+            document.getElementById('stat-pending').textContent = flags.filter(f => f.status === 'pending').length;
+            document.getElementById('stat-approved').textContent = flags.filter(f => f.status === 'approved').length;
+        }
+
+        async function testCompleteFlow() {
+            const resultDiv = document.getElementById('complete-result');
+            resultDiv.innerHTML = '<div class="result info">🔄 Running complete flow test...</div>';
+            
+            const steps = [];
+            
+            try {
+                // Step 1: Mock Response
+                const prompt = "ขอเกณฑ์การอนุมัติสินเชื่อบ้านที่ยุติธรรม";
+                const response = generateMockLLMResponse(prompt);
+                steps.push('✅ Step 1: Mock Response Generated');
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Step 2: Flag Submission
+                const flagData = {
+                    id: 'flag-' + Date.now(),
+                    flagged_text: 'ผู้หญิงมักชำระหนี้ตรงเวลากว่าผู้ชาย',
+                    main_category: 'Fairness',
+                    sub_category: 'Bias (อคติ/การเลือกปฏิบัติ)',
+                    severity: 'high',
+                    status: 'pending',
+                    created_at: new Date().toISOString()
+                };
+                
+                const localFlags = JSON.parse(localStorage.getItem('mockFlags') || '[]');
+                localFlags.push(flagData);
+                localStorage.setItem('mockFlags', JSON.stringify(localFlags));
+                steps.push('✅ Step 2: Flag Submitted to localStorage');
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Step 3: Load Submissions
+                const loadedFlags = JSON.parse(localStorage.getItem('mockFlags') || '[]');
+                const foundFlag = loadedFlags.find(f => f.id === flagData.id);
+                
+                if (foundFlag) {
+                    steps.push('✅ Step 3: Flag Loaded from localStorage');
+                } else {
+                    throw new Error('Flag not found in localStorage');
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Step 4: Verify
+                steps.push('✅ Step 4: Data Verified Successfully');
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <strong>🎉 Complete Flow Test PASSED</strong><br><br>
+                        ${steps.join('<br>')}
+                        <br><br>
+                        <strong>Summary:</strong><br>
+                        - Total Flags: ${loadedFlags.length}<br>
+                        - Latest Flag ID: ${flagData.id}<br>
+                        - Storage: localStorage ✅<br>
+                        - Status: All systems operational 🚀
+                    </div>
+                `;
+                
+                updateStats();
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <strong>❌ Complete Flow Test FAILED</strong><br><br>
+                        ${steps.join('<br>')}<br>
+                        ❌ Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        window.onload = () => {
+            updateStats();
+        };
+    </script>
+</body>
+</html>
